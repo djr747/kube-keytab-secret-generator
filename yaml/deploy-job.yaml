@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kube-keytab-secret-generator
+spec:
+  template:
+    metadata:
+      labels:
+        name: kube-keytab-secret-generator
+        app: kube-keytab-secret-generator
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: kube-keytab-secret-generator
+        image: djrsystems/kube-keytab-secret-generator:latest
+        env:
+        - name: SECRET_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: keytab-password
+              key: password
+        - name: ACCOUNT
+          value: "sqlmi-test-1"
+        - name: ENCRYPTION_METHODS
+          value: "aes256-cts-hmac-sha1-96,arcfour-hmac"
+        - name: REALM
+          value: "DROCX.LOCAL"
+        - name: SECRET_NAME
+          value: "sqlmi-test-1-keytab-secret"
+        - name: SPNS
+          value: "MSSQLSvc/sqlmi-test-1.azure.drocx.local,MSSQLSvc/sqlmi-test-1.azure.drocx.local:1433"
+      serviceAccountName: keytab-job
+      automountServiceAccountToken: true
