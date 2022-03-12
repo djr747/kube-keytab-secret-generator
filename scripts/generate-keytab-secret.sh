@@ -21,9 +21,12 @@
 # SOFTWARE.
 
 # Version 1.0 - 2022-01-03
+# Version 1.1 - 2022-03-12
 
 # Perform validations
-#
+
+set -e
+
 if [ -z "$PASSWORD" ]; then 
     echo "Password is required to run script"
     exit 1
@@ -42,11 +45,9 @@ fi
 if [ -z "$REALM" ]; then 
     echo "Kerberos realm is required to run script"
     exit 1
-else 
-    if [[ "$REALM" =~ [[:lower:]] ]]; then
-        echo "Lowercase character found realm must be uppercase"
-        exit 1
-    fi
+elif [[ "$REALM" =~ [[:lower:]] ]]; then
+    echo "Lowercase character found realm must be uppercase"
+    exit 1
 fi
 
 if [ -z "$SECRET_NAME" ]; then 
